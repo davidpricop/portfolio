@@ -1,0 +1,103 @@
+---
+// Solo tecnologías usadas en un trabajo o en uno de los proyectos. Sin niveles ni porcentajes.
+const columnas = [
+  {
+    titulo: 'IA aplicada',
+    items: ['Claude · Codex (agentes)', 'API de Claude en producto', 'Lectura de imágenes con IA', 'Automatización con IA', 'n8n', 'Spec-Driven Development', 'Guardrails para agentes', 'Revisar código hecho por IA'],
+  },
+  { titulo: 'Desarrollo', items: ['JavaScript', 'React · Vite · PWA', 'Expo · React Native', 'Flutter', 'Unity', 'Astro'] },
+  { titulo: 'Datos y nube', items: ['Supabase', 'PostgreSQL', 'Edge Functions', 'Firebase Hosting', 'Cloudflare', 'Google Maps Platform', 'GitHub'] },
+  { titulo: 'Sistemas', items: ['Linux · Windows Server', 'Docker · Compose', 'Portainer · Komodo', 'TrueNAS', 'Cloudflare Tunnel · Access', 'OpenVPN', 'Nginx Proxy Manager', 'Zabbix · Grafana', 'AWS'] },
+];
+---
+
+<section class="stack" id="stack">
+  <div class="wrap">
+    <div class="head">
+      <h2 class="display">Stack.</h2>
+      <p>Solo lo que he usado de verdad, en el trabajo o en estos proyectos. Sin barritas de porcentaje.</p>
+    </div>
+    <div class="cols">
+      {
+        columnas.map((c) => (
+          <div class="col">
+            <h3>{c.titulo}</h3>
+            <ul>
+              {c.items.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .stack {
+    padding-block: clamp(72px, 10vw, 120px) clamp(48px, 7vw, 80px);
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  h2 {
+    font-size: clamp(48px, 7vw, 96px);
+  }
+  .head p {
+    color: var(--muted);
+    max-width: 36ch;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border-top: 1.5px solid var(--fg);
+  }
+  .col {
+    padding: 24px 0;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 760px) {
+    .cols {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .col {
+      padding: 24px 24px 24px 0;
+      border-bottom: 0;
+    }
+    .col + .col {
+      padding-left: 24px;
+      border-left: 1px solid var(--line);
+    }
+  }
+  h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  li {
+    font-size: 22px;
+    font-weight: 700;
+    font-stretch: 78%;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+  }
+</style>

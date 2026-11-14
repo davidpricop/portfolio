@@ -1,0 +1,248 @@
+---
+import Base from '../layouts/Base.astro';
+import Contact from '../components/Contact.astro';
+import { site } from '../data/site';
+
+// Datos tomados del CV de David. Sin fecha de nacimiento ni teléfono: no hacen falta en una web pública.
+const experiencia = [
+  {
+    fechas: '2022 – hoy',
+    empresa: 'Venue Telecom',
+    lugar: 'Madrid',
+    puesto: 'Técnico de mantenimiento en hospitales',
+    tareas: [
+      'Instalo, configuro y mantengo los equipos de audio y vídeo (Extron) y el cableado de vídeo y de red.',
+      'Instalo y mantengo la aplicación SMACS OR y formo al personal que usa su panel.',
+      'Administro la central de cámaras PELCO y la red VINX.',
+      'Monitorizo los equipos, hago mantenimiento preventivo y correctivo y gestiono las incidencias.',
+    ],
+  },
+  {
+    fechas: '2019 – 2022',
+    empresa: 'Opinator',
+    lugar: 'Madrid',
+    puesto: 'Sistemas y administración',
+    tareas: [
+      'Administré las máquinas virtuales y los servidores físicos de la infraestructura interna.',
+      'Monitoricé y gestioné incidencias con Zabbix, Grafana y Zammad.',
+      'Mantuve dominios y SFTP en AWS, la web de la empresa y las plataformas internas (JIRA, OpenProject, XWiki, Moodle, NAS Synology, Bitdefender, Teampass, GitHub).',
+      'Escribí scripts en JavaScript para la plataforma web y di soporte a usuarios.',
+      'Fui auditor interno de ISO 27001.',
+    ],
+  },
+];
+const formacion = [
+  { titulo: 'Administración de Sistemas Informáticos en Red (ASIR)', nivel: 'Grado Superior', centro: 'Salesianos Atocha, Madrid', anio: '2019' },
+  { titulo: 'Telecomunicaciones', nivel: 'Grado Medio', centro: 'Colegio La Inmaculada (Escolapios), Getafe', anio: '2017' },
+];
+---
+
+<Base
+  title="Sobre mí"
+  description="David Pricop desarrolla aplicaciones y automatizaciones con IA en Madrid. Viene de sistemas, donde trabaja desde 2019. Trayectoria y formación."
+>
+  <section class="head">
+    <div class="wrap">
+      <p class="kicker">Sobre mí</p>
+      <h1 class="display">Vengo de <span class="outline">sistemas</span></h1>
+    </div>
+  </section>
+
+  <div class="wrap body">
+    <section class="sec">
+      <p class="kicker">Quién soy</p>
+      <div class="prose">
+        <p class="big">
+          Soy David Pricop. Desarrollo aplicaciones y automatizaciones con IA, y vengo de sistemas: estudié Telecomunicaciones y después
+          Administración de Sistemas Informáticos en Red.
+        </p>
+        <p>
+          En 2019 entré en Opinator, en el equipo de sistemas: máquinas virtuales y servidores, monitorización con Zabbix y Grafana,
+          dominios y SFTP en AWS y algún script en JavaScript para la plataforma web. Allí también fui auditor interno de ISO 27001.
+        </p>
+        <p>
+          Desde 2022 trabajo en Venue Telecom. Mantengo en hospitales los equipos de audio y vídeo, el cableado de red, las cámaras y la
+          aplicación que lo controla todo.
+        </p>
+        <p>
+          Empecé a hacer apps porque quería crear mis propios productos y aprender a manejar la IA como yo la necesito. De ahí han salido
+          <a href="/proyectos/">mis proyectos</a>: una carta digital que crea los platos a partir de una foto y ya tiene dos restaurantes como
+          clientes, dos apps que leen tickets y apuntes con la API de Claude, un juego en Google Play y otras aplicaciones web.
+        </p>
+        <p>
+          No me presento como ingeniero sénior. Sé plantear un proyecto, dirigir a los agentes, revisar lo que hacen y llevarlo hasta que
+          lo usa gente real. Busco un puesto de desarrollador de aplicaciones con IA en el que pueda seguir aprendiendo.
+        </p>
+      </div>
+    </section>
+
+    <section class="sec" id="trayectoria">
+      <p class="kicker">Trayectoria</p>
+      <ol class="jobs">
+        {
+          experiencia.map((e) => (
+            <li>
+              <p class="when mono">{e.fechas}</p>
+              <div>
+                <h2>{e.empresa}</h2>
+                <p class="role">
+                  {e.puesto} · {e.lugar}
+                </p>
+                <ul>
+                  {e.tareas.map((t) => (
+                    <li>{t}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="sec">
+      <p class="kicker">Formación</p>
+      <ol class="jobs">
+        {
+          formacion.map((f) => (
+            <li>
+              <p class="when mono">{f.anio}</p>
+              <div>
+                <h2>{f.titulo}</h2>
+                <p class="role">
+                  {f.nivel} · {f.centro}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {
+      site.cvPdf ? (
+        <section class="sec">
+          <p class="kicker">CV</p>
+          <div>
+            <a class="pill solid" href={site.cvPdf} download>
+              Descargar CV en PDF
+            </a>
+          </div>
+        </section>
+      ) : (
+        import.meta.env.DEV && (
+          <section class="sec">
+            <p class="kicker">CV</p>
+            <div>
+              <span class="flag">Pendiente: CV en PDF (solo visible en desarrollo)</span>
+            </div>
+          </section>
+        )
+      )
+    }
+  </div>
+
+  <Contact />
+</Base>
+
+<style>
+  .head {
+    padding-block: clamp(40px, 6vw, 72px) 0;
+  }
+  h1 {
+    font-size: clamp(48px, 11vw, 152px);
+    margin-top: 14px;
+  }
+  .body {
+    padding-block: clamp(48px, 7vw, 88px);
+    display: grid;
+    gap: clamp(56px, 7vw, 88px);
+  }
+  .sec {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    border-top: 1.5px solid var(--fg);
+    padding-top: 24px;
+  }
+  @media (min-width: 900px) {
+    .sec {
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 48px;
+    }
+  }
+  .prose {
+    display: grid;
+    gap: 18px;
+    max-width: 62ch;
+  }
+  .prose p {
+    font-size: clamp(17px, 1.7vw, 19px);
+  }
+  .prose .big {
+    font-size: clamp(22px, 2.6vw, 32px);
+    line-height: 1.25;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .prose a {
+    text-underline-offset: 4px;
+  }
+  .jobs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 40px;
+  }
+  .jobs > li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  @media (min-width: 640px) {
+    .jobs > li {
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 24px;
+    }
+    .when {
+      padding-top: 10px;
+    }
+  }
+  .when {
+    color: var(--muted);
+  }
+  h2 {
+    font-size: clamp(30px, 3.6vw, 44px);
+    font-weight: 800;
+    font-stretch: 70%;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .role {
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .jobs ul {
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    max-width: 62ch;
+  }
+  .jobs ul li {
+    padding-left: 18px;
+    position: relative;
+  }
+  .jobs ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 8px;
+    height: 1.5px;
+    background: currentColor;
+  }
+</style>

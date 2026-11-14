@@ -1,0 +1,513 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Rack from '../../components/Rack.astro';
+import Flujo from '../../components/Flujo.astro';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const proyectos = (await getCollection('proyectos')).sort((a, b) => a.data.orden - b.data.orden);
+  return proyectos.map((p, i) => ({
+    params: { slug: p.id },
+    props: { proyecto: p, siguiente: proyectos[(i + 1) % proyectos.length] },
+  }));
+}
+
+interface Props {
+  proyecto: CollectionEntry<'proyectos'>;
+  siguiente: CollectionEntry<'proyectos'>;
+}
+const { proyecto, siguiente } = Astro.props;
+const p = proyecto.data;
+const esHomelab = proyecto.id === 'homelab';
+const verPendientes = import.meta.env.DEV && p.pendientes.length > 0;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': esHomelab ? 'CreativeWork' : 'SoftwareApplication',
+    name: p.titulo,
+    description: p.descripcionSeo,
+    url: p.enlaces[0]?.url ?? new URL(`/proyectos/${proyecto.id}/`, site.url).href,
+    ...(esHomelab ? {} : { applicationCategory: proyecto.id === 'stack-pack' ? 'GameApplication' : 'WebApplication', operatingSystem: 'Web' }),
+    author: { '@type': 'Person', name: site.nombre, url: site.url },
+    inLanguage: 'es',
+  },
+];
+---
+
+<Base title={p.titulo} description={p.descripcionSeo} jsonLd={jsonLd}>
+  <section class="p-hero" style={`--c:${p.color};--t:${p.tinta}`}>
+    <div class="wrap">
+      <a class="back" href="/proyectos/">← Proyectos</a>
+      <div class="top">
+        <span class="status" data-estado={p.estado}><i></i>{p.estadoTexto}</span>
+        {p.demuestra && <p class="demuestra">{p.demuestra}</p>}
+        <h1 class="display" data-fit data-fit-max="300">{p.titulo}</h1>
+      </div>
+      <div class:list={['grid', { solo: !p.captura }]}>
+        <div class="txt">
+          <p class="one">{p.entradilla}</p>
+          {
+            p.enlaces.length > 0 && (
+              <div class="links">
+                {p.enlaces.map((e, i) => (
+                  <a class:list={['pill', { solid: i === 0 }]} href={e.url} rel="noopener">
+                    {e.texto} ↗
+                  </a>
+                ))}
+              </div>
+            )
+          }
+        </div>
+        {
+          p.captura && (
+            <div class="shot">
+              <Image src={p.captura} alt={p.capturaAlt ?? ''} width={600} loading="eager" />
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="specbar" aria-label="Ficha técnica">
+    <div class="wrap">
+      <dl>
+        {
+          p.ficha.map((f) => (
+            <div>
+              <dt>{f.campo}</dt>
+              <dd>{f.valor}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <div class="wrap p-body">
+    {
+      p.flujo.length > 0 && (
+        <section class="p-sec">
+          <p class="kicker">Qué hace la IA</p>
+          <div>
+            <h2>Paso a paso</h2>
+            <p class="flujo-intro">Qué hace la IA, qué hace el sistema y dónde revisa una persona.</p>
+            <div class="flujo-box">
+              <Flujo pasos={p.flujo} />
+            </div>
+          </div>
+        </section>
+      )
+    }
+    {
+      p.secciones.map((s) => (
+        <section class="p-sec">
+          <p class="kicker">{s.etiqueta}</p>
+          <div>
+            <h2>{s.titulo}</h2>
+            <p>{s.texto}</p>
+          </div>
+        </section>
+      ))
+    }
+
+    {
+      esHomelab && (
+        <section class="p-sec">
+          <p class="kicker">Esquema</p>
+          <div class="rack-box">
+            <Rack />
+          </div>
+        </section>
+      )
+    }
+
+    <section class="p-sec">
+      <p class="kicker">{esHomelab ? 'Servicios' : 'Funcionalidades'}</p>
+      <div class:list={['feat', { solo: p.enDesarrollo.length === 0 }]}>
+        <div>
+          <h3><i></i>{esHomelab ? 'En marcha' : 'Implementado'}</h3>
+          <ul>
+            {p.implementado.map((f) => <li>{f}</li>)}
+          </ul>
+        </div>
+        {
+          p.enDesarrollo.length > 0 && (
+            <div>
+              <h3>
+                <i class="dev" />
+                En desarrollo
+              </h3>
+              <ul>
+                {p.enDesarrollo.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    {
+      (p.galeria.length > 0 || verPendientes) && (
+        <section class="p-sec">
+          <p class="kicker">Capturas</p>
+          <div class="gallery">
+            {p.galeria.map((g) => (
+              <figure>
+                <div class="frame">
+                  <Image src={g.src} alt={g.alt} width={500} />
+                </div>
+                <figcaption>{g.pie}</figcaption>
+              </figure>
+            ))}
+            {verPendientes &&
+              p.pendientes.map((g) => (
+                <figure>
+                  <div class="frame empty">
+                    PENDIENTE
+                    <br />
+                    {g.texto}
+                    <br />
+                    (solo visible en desarrollo)
+                  </div>
+                  <figcaption>{g.pie}</figcaption>
+                </figure>
+              ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+
+  <section class="next" style={`--c:${siguiente.data.color};--t:${siguiente.data.tinta}`}>
+    <div class="wrap">
+      <a href={`/proyectos/${siguiente.id}/`}>
+        <span class="kicker">Siguiente proyecto</span>
+        <b>{siguiente.data.titulo} →</b>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .p-hero {
+    background: var(--c);
+    color: var(--t);
+    padding-block: 32px 0;
+    overflow: hidden;
+  }
+  .back {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.85;
+  }
+  .back:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+  .top {
+    margin-top: 36px;
+  }
+  .demuestra {
+    display: inline-block;
+    margin-left: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+  @media (max-width: 640px) {
+    .demuestra {
+      display: block;
+      width: fit-content;
+      margin: 12px 0 0;
+    }
+  }
+  h1 {
+    font-size: clamp(44px, 13.6vw, 176px);
+    margin-top: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    margin-top: clamp(20px, 3vw, 36px);
+  }
+  .grid.solo {
+    padding-bottom: 56px;
+  }
+  @media (min-width: 900px) {
+    .grid:not(.solo) {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: end;
+    }
+  }
+  .one {
+    font-size: clamp(20px, 2vw, 26px);
+    line-height: 1.35;
+    max-width: 34ch;
+    font-weight: 500;
+  }
+  .links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .links .pill.solid {
+    background: var(--t);
+    color: var(--c);
+    border-color: var(--t);
+  }
+  .grid:not(.solo) .txt {
+    padding-bottom: 48px;
+  }
+  .shot {
+    justify-self: center;
+    width: min(300px, 72%);
+    aspect-ratio: 375 / 560;
+    border: 9px solid #050506;
+    border-bottom: 0;
+    border-radius: 40px 40px 0 0;
+    overflow: hidden;
+    background: #050506;
+  }
+  .shot :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 31px 31px 0 0;
+  }
+
+  .specbar {
+    background: var(--night);
+    color: var(--night-fg);
+  }
+  dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 24px;
+    padding-block: 8px;
+  }
+  @media (min-width: 700px) {
+    dl {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1100px) {
+    dl {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  dl div {
+    padding: 16px 0;
+    display: grid;
+    gap: 4px;
+    align-content: start;
+  }
+  dt {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--night-muted);
+  }
+  dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .p-body {
+    padding-block: clamp(56px, 8vw, 96px);
+    display: grid;
+    gap: clamp(56px, 7vw, 88px);
+  }
+  .p-sec {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 900px) {
+    .p-sec {
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 48px;
+    }
+    .p-sec > .kicker {
+      padding-top: 12px;
+    }
+  }
+  .p-sec h2 {
+    font-size: clamp(34px, 4.6vw, 60px);
+    font-weight: 800;
+    font-stretch: 68%;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.015em;
+    max-width: 20ch;
+  }
+  .p-sec h2 + p {
+    font-size: clamp(17px, 1.7vw, 19px);
+    max-width: 60ch;
+    margin-top: 16px;
+  }
+  .flujo-intro {
+    color: var(--muted);
+  }
+  .flujo-box {
+    margin-top: 20px;
+    max-width: 640px;
+    padding: 8px 20px;
+    background: var(--card);
+    border-radius: 20px;
+    --flujo-fondo: var(--card);
+  }
+  .rack-box {
+    max-width: 640px;
+  }
+  .feat {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 700px) {
+    .feat {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .feat > div {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 24px;
+    align-self: start;
+  }
+  /* Sin lista «en desarrollo»: la tarjeta ocupa todo el ancho y la lista va en dos columnas */
+  @media (min-width: 700px) {
+    .feat.solo > div {
+      grid-column: 1 / -1;
+    }
+    .feat.solo ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 32px;
+    }
+  }
+  .feat h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .feat h3 i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--led);
+  }
+  .feat h3 i.dev {
+    background: var(--warn);
+  }
+  .feat ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+  .feat li {
+    font-size: 17px;
+    padding-left: 18px;
+    position: relative;
+  }
+  .feat li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 8px;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
+    gap: 20px;
+  }
+  .gallery figure {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .frame {
+    aspect-ratio: 375 / 790;
+    border-radius: 28px;
+    border: 7px solid #0b0b0c;
+    overflow: hidden;
+    background: #0b0b0c;
+  }
+  .frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+  .frame.empty {
+    border: 1.5px dashed var(--warn);
+    background: transparent;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.6;
+    padding: 16px;
+  }
+  figcaption {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .next {
+    background: var(--c);
+    color: var(--t);
+  }
+  .next a {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 20px;
+    flex-wrap: wrap;
+    text-decoration: none;
+    padding-block: 48px;
+  }
+  .next .kicker {
+    color: inherit;
+    opacity: 0.85;
+  }
+  .next b {
+    font-size: clamp(48px, 9vw, 120px);
+    font-weight: 800;
+    font-stretch: 66%;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+  }
+</style>

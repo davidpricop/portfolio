@@ -1,0 +1,154 @@
+---
+import { nav, site } from '../data/site';
+const path = Astro.url.pathname;
+const cvHref = site.cvPdf ?? '/sobre-mi/#trayectoria';
+---
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="David Pricop, inicio">David Pricop</a>
+    <nav class="main" aria-label="Principal">
+      {
+        nav.map((l) => (
+          <a href={l.href} aria-current={!l.href.includes('#') && path.startsWith(l.href) ? 'page' : undefined}>
+            {l.texto}
+          </a>
+        ))
+      }
+    </nav>
+    <a class="pill small cv" href={cvHref}>CV</a>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu-movil" aria-label="Menú">
+      <span></span><span></span>
+    </button>
+  </div>
+  <nav id="menu-movil" class="mobile" aria-label="Menú" hidden>
+    {nav.map((l) => <a href={l.href}>{l.texto}</a>)}
+    <a href={cvHref}>CV</a>
+  </nav>
+</header>
+<noscript>
+  <style is:inline>
+    /* Sin JavaScript el botón no puede abrir el menú: se muestran los enlaces directamente. */
+    @media (max-width: 759px) {
+      header.site .burger {
+        display: none !important;
+      }
+      header.site .mobile[hidden] {
+        display: grid !important;
+        position: static !important;
+      }
+    }
+  </style>
+</noscript>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('header.site .burger');
+  const menu = document.getElementById('menu-movil');
+  if (btn && menu) {
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
+    addEventListener('keydown', (e) => e.key === 'Escape' && set(false));
+    matchMedia('(min-width: 760px)').addEventListener('change', () => set(false));
+  }
+</script>
+
+<style>
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .wrap {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    min-height: var(--header-h);
+  }
+  .brand {
+    font-weight: 800;
+    font-stretch: 75%;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-right: auto;
+  }
+  nav.main {
+    display: flex;
+    gap: 26px;
+  }
+  nav.main a {
+    text-decoration: none;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  nav.main a:hover,
+  nav.main a[aria-current='page'] {
+    color: var(--fg);
+  }
+  .burger,
+  .mobile {
+    display: none;
+  }
+  @media (max-width: 759px) {
+    nav.main,
+    .cv {
+      display: none;
+    }
+    .burger {
+      display: grid;
+      place-content: center;
+      gap: 7px;
+      width: 44px;
+      height: 44px;
+      margin-right: -10px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      cursor: pointer;
+    }
+    .burger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--fg);
+      transition: transform 0.2s ease;
+    }
+    .burger[aria-expanded='true'] span:first-child {
+      transform: translateY(4.5px) rotate(45deg);
+    }
+    .burger[aria-expanded='true'] span:last-child {
+      transform: translateY(-4.5px) rotate(-45deg);
+    }
+    .mobile:not([hidden]) {
+      display: grid;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      background: var(--bg);
+      border-bottom: 1.5px solid var(--fg);
+      padding: 8px 20px 20px;
+    }
+    .mobile a {
+      text-decoration: none;
+      font-weight: 800;
+      font-stretch: 70%;
+      font-size: 34px;
+      line-height: 1;
+      text-transform: uppercase;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .mobile a:last-child {
+      border-bottom: 0;
+    }
+  }
+</style>

@@ -1,0 +1,167 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const proyectos = (await getCollection('proyectos')).sort((a, b) => a.data.orden - b.data.orden);
+---
+
+<Base title="Proyectos" description="Los proyectos de David Pricop: MadridEnCarta, Stack Pack, Play Cash Bank, Ares Finanzas, MichiApuntes, Luma, Bazar Madrid y su homelab.">
+  <section class="head">
+    <div class="wrap">
+      <p class="kicker">Proyectos</p>
+      <h1 class="display">Lo que he construido</h1>
+      <p class="lead">
+        {proyectos.length} proyectos hechos por mí, de la idea al despliegue. Los tres primeros llevan IA dentro del producto. Cada uno dice
+        en qué estado está de verdad.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap list">
+    <ul>
+      {
+        proyectos.map((p) => (
+          <li style={`--c:${p.data.color};--t:${p.data.tinta}`}>
+            <a href={`/proyectos/${p.id}/`}>
+              <span class="status" data-estado={p.data.estado}>
+                <i />
+                {p.data.estadoTexto}
+              </span>
+              <span class="name">
+                {p.data.titulo}
+                {p.data.destacado && <span class="ia">IA dentro</span>}
+              </span>
+              <span class="what">{p.data.entradilla}</span>
+              <span class="stack mono">{p.data.stack.slice(0, 4).join(' · ')}</span>
+              <span class="go" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-block: clamp(40px, 6vw, 72px) clamp(28px, 4vw, 48px);
+  }
+  h1 {
+    font-size: clamp(48px, 9vw, 128px);
+    margin-top: 14px;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: clamp(18px, 1.8vw, 20px);
+    max-width: 50ch;
+    margin-top: 20px;
+  }
+  .list {
+    padding-bottom: clamp(72px, 10vw, 120px);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1.5px solid var(--fg);
+  }
+  li {
+    border-bottom: 1px solid var(--line);
+  }
+  a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'status go' 'name go' 'what go' 'stack go';
+    gap: 8px 24px;
+    padding: 28px 0;
+    text-decoration: none;
+    position: relative;
+    transition: padding 0.25s ease;
+  }
+  a::before {
+    content: '';
+    position: absolute;
+    inset: 0 -20px;
+    background: var(--c);
+    opacity: 0;
+    border-radius: 20px;
+    transition: opacity 0.25s ease;
+    z-index: -1;
+  }
+  a:hover,
+  a:focus-visible {
+    color: var(--t);
+  }
+  a:hover::before,
+  a:focus-visible::before {
+    opacity: 1;
+  }
+  a:hover .status,
+  a:hover .what,
+  a:hover .stack,
+  a:focus-visible .status,
+  a:focus-visible .what,
+  a:focus-visible .stack {
+    color: inherit;
+  }
+  .status {
+    grid-area: status;
+    color: var(--muted);
+  }
+  .name {
+    grid-area: name;
+    font-weight: 800;
+    font-stretch: 66%;
+    font-size: clamp(44px, 7vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .ia {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    font-stretch: 100%;
+    letter-spacing: 0.08em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--led);
+    color: #0b0b0c;
+  }
+  .what {
+    grid-area: what;
+    color: var(--muted);
+    font-size: clamp(17px, 1.7vw, 19px);
+    max-width: 56ch;
+  }
+  .stack {
+    grid-area: stack;
+    color: var(--muted);
+  }
+  .go {
+    grid-area: go;
+    align-self: center;
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 300;
+    transition: transform 0.25s ease;
+  }
+  a:hover .go {
+    transform: translateX(6px);
+  }
+  @media (min-width: 900px) {
+    a {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+      grid-template-areas: 'status status go' 'name what go' 'name stack go';
+      align-items: start;
+      column-gap: 48px;
+    }
+    .name {
+      align-self: center;
+    }
+  }
+</style>

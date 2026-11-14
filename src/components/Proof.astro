@@ -1,0 +1,72 @@
+---
+// Cuatro datos comprobados. Si cambia la realidad, se cambia aquí.
+const datos = [
+  { valor: 'IA en uso', texto: 'Tres de mis apps usan IA por dentro: leen la foto de una carta, de un ticket o de unos apuntes.' },
+  { valor: '2 clientes', texto: 'Dos restaurantes de Madrid son clientes de MadridEnCarta. El segundo llegó recomendado por el primero.' },
+  { valor: 'Claude · Codex', texto: 'Mis agentes de programación. Los dirijo con especificaciones y reglas, y reviso lo que hacen.' },
+  { valor: 'Desde 2019', texto: 'En sistemas, en Opinator y en Venue Telecom. Sé desplegar y mantener lo que construyo.' },
+];
+---
+
+<section class="proof" aria-label="En resumen">
+  <div class="wrap">
+    {
+      datos.map((d) => (
+        <div class="dato">
+          <b>{d.valor}</b>
+          <span>{d.texto}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .proof {
+    border-block: 1.5px solid var(--fg);
+  }
+  .wrap {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+  .dato {
+    padding: 22px 0;
+    display: grid;
+    gap: 4px;
+    align-content: start;
+  }
+  .dato:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  b {
+    font-weight: 800;
+    font-stretch: 72%;
+    font-size: clamp(26px, 3vw, 40px);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  span {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  @media (min-width: 1000px) {
+    .wrap {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 0;
+    }
+    .dato {
+      padding: 26px 24px;
+    }
+    .dato:nth-child(n + 3) {
+      border-top: 0;
+    }
+    .dato + .dato {
+      border-left: 1.5px solid var(--fg);
+    }
+    .dato:first-child {
+      padding-left: 0;
+    }
+  }
+</style>

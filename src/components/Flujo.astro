@@ -1,0 +1,93 @@
+---
+// Flujo de un caso con IA: quién hace cada paso (persona, IA o sistema).
+// Sirve en fondo claro y oscuro: los colores salen de las variables de la sección.
+interface Props {
+  pasos: { quien: 'persona' | 'ia' | 'sistema'; texto: string }[];
+}
+const { pasos } = Astro.props;
+const etiqueta = { persona: 'Persona', ia: 'IA', sistema: 'Sistema' } as const;
+---
+
+<ol class="flujo">
+  {
+    pasos.map((p) => (
+      <li data-quien={p.quien}>
+        <span class="quien">{etiqueta[p.quien]}</span>
+        <span class="texto">{p.texto}</span>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .flujo {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    counter-reset: paso;
+  }
+  li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 14px;
+    align-items: baseline;
+    padding: 11px 0 11px 22px;
+    counter-increment: paso;
+  }
+  /* Línea vertical que une los pasos */
+  li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    background: var(--flujo-linea, var(--line));
+  }
+  li:first-child::before {
+    top: 50%;
+  }
+  li:last-child::before {
+    bottom: 50%;
+  }
+  li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc(50% - 5px);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--flujo-fondo, var(--bg));
+    border: 1.5px solid currentColor;
+  }
+  li[data-quien='ia']::after {
+    background: var(--flujo-ia, var(--led));
+    border-color: var(--flujo-ia, var(--led));
+  }
+  .quien {
+    justify-self: start;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--flujo-linea, var(--line));
+    color: var(--flujo-tenue, var(--muted));
+    line-height: 1.3;
+  }
+  li[data-quien='ia'] .quien {
+    background: var(--flujo-ia, var(--led));
+    border-color: var(--flujo-ia, var(--led));
+    color: #0b0b0c;
+    font-weight: 500;
+  }
+  .texto {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+</style>

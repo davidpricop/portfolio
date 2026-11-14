@@ -1,0 +1,295 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Flujo from './Flujo.astro';
+
+interface Props {
+  proyectos: CollectionEntry<'proyectos'>[];
+}
+// Solo los casos con IA dentro del producto. El resto va en «Otros proyectos».
+const proyectos = Astro.props.proyectos.filter((p) => p.data.destacado && p.data.captura);
+const total = String(proyectos.length).padStart(2, '0');
+const primero = proyectos[0];
+---
+
+<section class="show" id="proyectos" style={`--pc:${primero.data.color};--pt:${primero.data.tinta}`}>
+  <div class="wrap">
+    <div class="intro">
+      <p class="kicker">Casos con IA</p>
+      <h2 class="display">Tres productos con IA dentro</h2>
+      <p>
+        En estos tres la IA no solo me ayudó a programar: forma parte del producto. Los tres están en uso y los he hecho yo solo, de la idea
+        al despliegue. El código es privado, así que aquí enseño qué hace la IA en cada paso y dónde revisa una persona.
+      </p>
+    </div>
+
+    <div class="grid">
+      <!-- Móvil fijo que cambia de captura y de color con el proyecto visible (solo escritorio) -->
+      <div class="stage" aria-hidden="true">
+        <div class="panel"></div>
+        <div class="device">
+          {proyectos.map((p, i) => <Image src={p.data.captura!} alt="" width={640} class:list={[{ on: i === 0 }]} data-i={i} loading={i === 0 ? 'eager' : 'lazy'} />)}
+        </div>
+        <span class="tag" data-total={total}>01 / {total} · {primero.data.titulo}</span>
+      </div>
+
+      <div class="chapters">
+        {
+          proyectos.map((p, i) => (
+            <article class="chapter" data-i={i} data-color={p.data.color} data-tinta={p.data.tinta} data-name={p.data.titulo} style={`--c:${p.data.acento};--cc:${p.data.color}`}>
+              <a class="inline-shot" href={`/proyectos/${p.id}/`} tabindex="-1" aria-hidden="true">
+                <Image src={p.data.captura!} alt="" width={400} />
+              </a>
+              <span class="status" data-estado={p.data.estado}>
+                <i />
+                {p.data.estadoTexto}
+              </span>
+              <h3>
+                <a href={`/proyectos/${p.id}/`}>
+                  {p.data.titulo}
+                  <span class="dot">.</span>
+                </a>
+              </h3>
+              {p.data.demuestra && <p class="demuestra">{p.data.demuestra}</p>}
+              <p class="one">{p.data.resumen}</p>
+              <div class="flujo-box">
+                <Flujo pasos={p.data.flujo} />
+              </div>
+              <p class="stackline">{p.data.stack.join(' · ')}</p>
+              <div class="links">
+                <a class="pill solid" href={`/proyectos/${p.id}/`}>
+                  Ver proyecto<span class="sr-only">: {p.data.titulo}</span>
+                </a>
+                {p.data.enlaces[0] && (
+                  <a class="pill" href={p.data.enlaces[0].url} rel="noopener">
+                    {p.data.enlaces[0].texto} ↗
+                  </a>
+                )}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const show = document.querySelector<HTMLElement>('.show');
+  const tag = show?.querySelector<HTMLElement>('.tag');
+  const imgs = show?.querySelectorAll<HTMLImageElement>('.stage .device img');
+  const chapters = show ? [...show.querySelectorAll<HTMLElement>('.chapter')] : [];
+  if (show && tag && imgs && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          show.style.setProperty('--pc', el.dataset.color!);
+          show.style.setProperty('--pt', el.dataset.tinta!);
+          imgs.forEach((im) => im.classList.toggle('on', im.dataset.i === el.dataset.i));
+          const pos = String(chapters.indexOf(el) + 1).padStart(2, '0');
+          tag.textContent = `${pos} / ${tag.dataset.total} · ${el.dataset.name}`;
+        }
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    );
+    chapters.forEach((c) => io.observe(c));
+  }
+</script>
+
+<style>
+  .show {
+    background: var(--night);
+    color: var(--night-fg);
+    padding-block: clamp(72px, 10vw, 120px) 56px;
+  }
+  .intro {
+    display: grid;
+    gap: 18px;
+    max-width: 900px;
+    margin-bottom: clamp(40px, 6vw, 72px);
+  }
+  .intro .kicker {
+    color: var(--night-muted);
+  }
+  .intro h2 {
+    font-size: clamp(48px, 8vw, 112px);
+  }
+  .intro p {
+    color: var(--night-muted);
+    font-size: clamp(18px, 1.8vw, 20px);
+    max-width: 50ch;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stage {
+    display: none;
+  }
+  @media (min-width: 960px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 72px;
+    }
+    .stage {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 20px);
+      height: calc(100vh - var(--header-h) - 40px);
+      max-height: 820px;
+    }
+    .panel {
+      position: absolute;
+      inset: 0;
+      border-radius: 36px;
+      background: var(--pc);
+      transition: background-color 0.7s ease;
+      overflow: hidden;
+    }
+    .panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(90deg, rgb(255 255 255 / 0.07) 0 1px, transparent 1px 48px),
+        repeating-linear-gradient(0deg, rgb(255 255 255 / 0.07) 0 1px, transparent 1px 48px);
+    }
+    .device {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      height: 84%;
+      aspect-ratio: 375 / 790;
+      border-radius: 38px;
+      border: 9px solid #050506;
+      background: #050506;
+      overflow: hidden;
+      z-index: 2;
+      box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.6);
+    }
+    .device :global(img) {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 29px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .device :global(img.on) {
+      opacity: 1;
+    }
+    .tag {
+      position: absolute;
+      left: 24px;
+      bottom: 20px;
+      z-index: 3;
+      color: var(--pt);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.7s ease;
+    }
+  }
+
+  .chapter {
+    padding-block: 56px;
+    border-top: 1px solid var(--night-line);
+    display: grid;
+    gap: 18px;
+    align-content: center;
+  }
+  @media (min-width: 960px) {
+    .chapter {
+      min-height: 78vh;
+      padding-block: 72px;
+    }
+  }
+  .status {
+    color: var(--night-muted);
+  }
+  h3 {
+    font-size: clamp(44px, 5.5vw, 80px);
+    font-weight: 800;
+    font-stretch: 66%;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--c);
+  }
+  .dot {
+    color: var(--c);
+  }
+  .one {
+    font-size: clamp(19px, 1.9vw, 22px);
+    line-height: 1.4;
+    max-width: 34ch;
+  }
+  .demuestra {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--c);
+  }
+  .flujo-box {
+    margin-top: 6px;
+    padding: 6px 18px;
+    border: 1px solid var(--night-line);
+    border-radius: 14px;
+    --flujo-linea: var(--night-line);
+    --flujo-fondo: var(--night);
+    --flujo-tenue: var(--night-muted);
+    --flujo-ia: var(--c);
+  }
+  .stackline {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--night-muted);
+  }
+  .links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .links .pill.solid {
+    background: var(--c);
+    border-color: var(--c);
+    color: #0b0b0c;
+  }
+  .inline-shot {
+    display: flex;
+    justify-content: center;
+    height: clamp(260px, 72vw, 340px);
+    padding-top: 28px;
+    border-radius: 24px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    background: var(--cc);
+  }
+  .inline-shot :global(img) {
+    width: min(200px, 56%);
+    height: auto;
+    align-self: flex-start;
+    display: block;
+    border: 6px solid #050506;
+    border-bottom: 0;
+    border-radius: 26px 26px 0 0;
+  }
+  @media (min-width: 960px) {
+    .inline-shot {
+      display: none;
+    }
+  }
+</style>

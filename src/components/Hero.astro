@@ -1,0 +1,185 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  proyectos: CollectionEntry<'proyectos'>[];
+}
+const { proyectos } = Astro.props;
+
+// Cinco capturas para el abanico; la primera de la lista va en el centro.
+const conCaptura = proyectos.filter((p) => p.data.captura).slice(0, 5);
+const orden = [3, 1, 0, 2, 4].map((i) => conCaptura[i]).filter(Boolean);
+---
+
+<section class="hero">
+  <div class="wrap">
+    <div class="meta mono rise">
+      <span class="status live" data-estado="produccion"><i></i>Abierto a ofertas</span>
+      <span>Madrid</span>
+      <span class="extra">Apps con IA · Automatización</span>
+    </div>
+    <h1 class="display rise d1" data-fit><span>David</span> <span class="outline">Pricop</span></h1>
+    <div class="below">
+      <div class="copy">
+        <p class="role rise d2">Desarrollo aplicaciones y automatizaciones con IA.</p>
+        <p class="lede rise d2">
+          Tres de mis productos llevan IA por dentro y están en uso: MadridEnCarta ya tiene dos restaurantes como clientes. Los construyo
+          dirigiendo agentes como Claude y Codex, <em>reviso cada decisión que toman</em> y, como vengo de sistemas, los despliego y los
+          mantengo yo.
+        </p>
+        <div class="cta rise d3">
+          <a class="pill solid" href="#proyectos">Ver los casos con IA ↓</a>
+          <a class="pill" href="#metodo">Cómo trabajo</a>
+        </div>
+        <p class="note mono">Todas las pantallas son capturas reales de mis apps.</p>
+      </div>
+      <figure class="fan rise d2" aria-label="Capturas reales de mis aplicaciones">
+        {
+          orden.map((p) => (
+            <div class="ph">
+              <Image src={p.data.captura!} alt={p.data.titulo} width={400} loading="eager" />
+            </div>
+          ))
+        }
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: 40px 0;
+    overflow: hidden;
+  }
+  .meta {
+    display: flex;
+    gap: 10px 18px;
+    flex-wrap: wrap;
+    align-items: center;
+    color: var(--muted);
+  }
+  .meta .status {
+    color: var(--fg);
+    text-transform: none;
+    letter-spacing: 0.04em;
+    font-size: 12.5px;
+  }
+  h1 {
+    font-size: clamp(52px, 16.4vw, 208px);
+    margin-top: 16px;
+  }
+  .below {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin-top: clamp(20px, 3vw, 36px);
+  }
+  .copy {
+    padding-bottom: clamp(20px, 5vw, 64px);
+  }
+  .role {
+    font-weight: 800;
+    font-stretch: 72%;
+    font-size: clamp(30px, 3.4vw, 46px);
+    line-height: 0.98;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    max-width: 16ch;
+  }
+  .lede {
+    margin-top: 18px;
+    max-width: 38ch;
+    font-size: clamp(17px, 1.6vw, 20px);
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .lede em {
+    color: var(--fg);
+  }
+  .lede em {
+    font-style: normal;
+    background: linear-gradient(transparent 62%, color-mix(in srgb, var(--led) 45%, transparent) 62%);
+  }
+  .cta {
+    margin-top: 30px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .note {
+    margin-top: 22px;
+    color: var(--muted);
+  }
+  @media (min-width: 900px) {
+    .below {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 56px;
+      align-items: end;
+    }
+  }
+  @media (max-width: 560px) {
+    .meta .extra {
+      display: none;
+    }
+  }
+
+  /* Abanico de móviles apoyado en el borde inferior */
+  .fan {
+    position: relative;
+    height: clamp(236px, 37vw, 470px);
+  }
+  .ph {
+    position: absolute;
+    top: 9%;
+    left: 50%;
+    width: clamp(98px, 15.4vw, 200px);
+    aspect-ratio: 375 / 790;
+    border-radius: clamp(18px, 2.6vw, 32px);
+    border: clamp(4px, 0.6vw, 7px) solid #0b0b0c;
+    background: #0b0b0c;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.35);
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .ph :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    border-radius: clamp(13px, 2vw, 24px);
+  }
+  .ph:nth-child(1) {
+    transform: translateX(-50%) translateX(-100%) rotate(-12deg) translateY(6%);
+    z-index: 1;
+  }
+  .ph:nth-child(2) {
+    transform: translateX(-50%) translateX(-52%) rotate(-6deg) translateY(1%);
+    z-index: 2;
+  }
+  .ph:nth-child(3) {
+    transform: translateX(-50%) translateY(-4%);
+    z-index: 5;
+  }
+  .ph:nth-child(4) {
+    transform: translateX(-50%) translateX(52%) rotate(6deg) translateY(1%);
+    z-index: 2;
+  }
+  .ph:nth-child(5) {
+    transform: translateX(-50%) translateX(100%) rotate(12deg) translateY(6%);
+    z-index: 1;
+  }
+  .fan:hover .ph:nth-child(1) {
+    transform: translateX(-50%) translateX(-112%) rotate(-15deg) translateY(8%);
+  }
+  .fan:hover .ph:nth-child(2) {
+    transform: translateX(-50%) translateX(-60%) rotate(-7deg) translateY(1%);
+  }
+  .fan:hover .ph:nth-child(4) {
+    transform: translateX(-50%) translateX(60%) rotate(7deg) translateY(1%);
+  }
+  .fan:hover .ph:nth-child(5) {
+    transform: translateX(-50%) translateX(112%) rotate(15deg) translateY(8%);
+  }
+</style>

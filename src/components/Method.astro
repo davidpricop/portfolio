@@ -1,0 +1,316 @@
+---
+// Ocho pasos. «control» marca los puntos donde nada avanza sin aprobación humana.
+const pasos = [
+  { titulo: 'Idea y problema', yo: 'Veo un problema y hablo con quien lo sufre.' },
+  { titulo: 'Requisitos', yo: 'Decido qué entra y qué se queda fuera.', agentes: 'Me señalan lo que se me ha pasado.' },
+  { titulo: 'Especificación', yo: 'Escribo la especificación y la doy por buena.', agentes: 'Me proponen borradores y yo los corrijo.', control: true },
+  { titulo: 'Guardrails', yo: 'Les marco las reglas y cuándo doy algo por terminado.', control: true },
+  { titulo: 'Desarrollo', yo: 'Parto el trabajo en tareas pequeñas.', agentes: 'Programan cada tarea respetando las reglas.' },
+  { titulo: 'Supervisión', yo: 'Reviso cada cambio y pruebo la app a mano.', agentes: 'Me explican qué han cambiado y por qué.', control: true },
+  { titulo: 'Pruebas', yo: 'Busco fallos y pido que se arreglen.', agentes: 'Los arreglan y vuelven a probar.' },
+  { titulo: 'Despliegue', yo: 'Lo publico, configuro el dominio y lo vigilo.', agentes: 'Me ayudan con scripts y configuración.', control: true },
+];
+const principios = [
+  {
+    titulo: 'Primero, por escrito',
+    texto: 'Antes de programar dejo escrito qué tiene que hacer cada cosa y cómo voy a saber que está terminada. Es lo que se llama Spec-Driven Development. Si luego hay dudas, manda ese documento.',
+  },
+  {
+    titulo: 'Guardrails',
+    texto: 'Son los límites que les pongo a los agentes: qué pueden tocar y qué no pueden decidir sin preguntarme. Hay que definirlos muy bien, porque si no, la IA decide por su cuenta.',
+  },
+  {
+    titulo: 'Lo reviso todo',
+    texto: 'Reviso cada decisión que toma la IA y pruebo cada versión como la usaría el cliente. Si falla, o no hace lo que estaba escrito, vuelve atrás.',
+  },
+];
+---
+
+<section class="method" id="metodo">
+  <div class="wrap">
+    <div class="intro">
+      <p class="kicker">Método</p>
+      <h2 class="display">Cómo trabajo <span class="outline">con la IA</span></h2>
+      <p class="lead">
+        La IA se equivoca mucho: alucina y toma decisiones sin preguntarte. Por eso, antes de que programe nada, le dejo por escrito qué hay
+        que construir y los límites que no puede pasar, y después reviso todas las decisiones que toma. Trabajo sobre todo con Claude y
+        Codex. Los rombos son los pasos donde nada sigue adelante sin mi visto bueno.
+      </p>
+    </div>
+
+    <ol class="pipe">
+      {
+        pasos.map((p, i) => (
+          <li class:list={['step', { gate: p.control }]} style={`--i:${i}`}>
+            <div class="node">
+              <span>{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3>
+              {p.titulo}
+              {p.control && <span class="sr-only"> (punto de control humano)</span>}
+            </h3>
+            <p class="me">
+              <b>Yo</b>
+              {p.yo}
+            </p>
+            {p.agentes && (
+              <p class="ag">
+                <b>Agentes</b>
+                {p.agentes}
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+    <div class="legend mono" aria-hidden="true">
+      <span><i class="c"></i>Paso de trabajo</span>
+      <span><i></i>Punto de control humano</span>
+    </div>
+
+    <div class="pillars">
+      {
+        principios.map((p) => (
+          <div>
+            <h3>{p.titulo}</h3>
+            <p>{p.texto}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .method {
+    padding-block: clamp(72px, 10vw, 120px);
+  }
+  .intro {
+    display: grid;
+    gap: 18px;
+    max-width: 980px;
+    margin-bottom: clamp(40px, 6vw, 64px);
+  }
+  .intro h2 {
+    font-size: clamp(44px, 7vw, 100px);
+  }
+  .lead {
+    color: var(--muted);
+    font-size: clamp(18px, 1.8vw, 20px);
+    max-width: 56ch;
+  }
+
+  .pipe {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 56px 0;
+  }
+  .step {
+    position: relative;
+    padding-right: 32px;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  /* Línea que une los pasos y punto que la recorre */
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 27px;
+    height: 2px;
+    background: var(--fg);
+  }
+  .step:last-child::before {
+    right: auto;
+    width: 28px;
+  }
+  .step::after {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--led);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--led) 25%, transparent);
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .step:not(:last-child)::after {
+      animation: hop 12s linear infinite;
+      animation-delay: calc(var(--i) * 1.5s);
+    }
+  }
+  @keyframes hop {
+    0% {
+      left: 0;
+      opacity: 1;
+    }
+    12.5% {
+      left: calc(100% - 12px);
+      opacity: 1;
+    }
+    12.6%,
+    100% {
+      left: 0;
+      opacity: 0;
+    }
+  }
+  .node {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--fg);
+    display: grid;
+    place-items: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+  .gate .node {
+    background: var(--fg);
+    color: var(--bg);
+    border-radius: 14px;
+    transform: rotate(45deg);
+    width: 46px;
+    height: 46px;
+    margin: 5px;
+  }
+  .gate .node span {
+    transform: rotate(-45deg);
+  }
+  .step h3 {
+    font-size: clamp(24px, 2.4vw, 30px);
+    font-weight: 800;
+    font-stretch: 70%;
+    line-height: 1;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+  .me,
+  .ag {
+    font-size: 16px;
+    line-height: 1.45;
+    max-width: 24ch;
+  }
+  .ag {
+    font-size: 15px;
+    color: var(--muted);
+    border-top: 1px dashed var(--line);
+    padding-top: 10px;
+  }
+  .me b,
+  .ag b {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    color: var(--muted);
+  }
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .legend i {
+    width: 14px;
+    height: 14px;
+    background: var(--fg);
+    border-radius: 3px;
+    transform: rotate(45deg);
+  }
+  .legend i.c {
+    border-radius: 50%;
+    transform: none;
+    background: var(--bg);
+    border: 2px solid var(--fg);
+  }
+  @media (max-width: 899px) {
+    .pipe {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+      padding-left: 72px;
+      position: relative;
+    }
+    .pipe::before {
+      content: '';
+      position: absolute;
+      left: 27px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--fg);
+    }
+    .step {
+      padding-right: 0;
+    }
+    .step::before,
+    .step::after {
+      display: none;
+    }
+    .node {
+      position: absolute;
+      left: -72px;
+      top: 0;
+    }
+    .gate .node {
+      left: -67px;
+    }
+    .step h3 {
+      margin-top: 14px;
+    }
+    .me,
+    .ag {
+      max-width: 44ch;
+    }
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px 24px;
+    margin-top: clamp(56px, 8vw, 88px);
+  }
+  @media (min-width: 800px) {
+    .pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .pillars div {
+    border-top: 1.5px solid var(--fg);
+    padding: 20px 24px 0 0;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .pillars h3 {
+    font-size: 30px;
+    font-weight: 800;
+    font-stretch: 70%;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .pillars p {
+    color: var(--muted);
+    max-width: 36ch;
+  }
+</style>

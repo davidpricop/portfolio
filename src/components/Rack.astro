@@ -1,0 +1,147 @@
+---
+// Esquema del homelab. Es un dibujo, no una foto: no contiene IP, dominios internos ni credenciales.
+const unidades = [
+  { nombre: 'Cloudflare Tunnel', detalle: 'entrada sin puertos web abiertos · Cloudflare Access', leds: ['on', 'azul', 'on'], alta: false },
+  { nombre: 'OpenVPN', detalle: 'acceso remoto seguro', leds: ['on', 'on', 'off'], alta: false },
+  { nombre: 'Docker Compose', detalle: 'Immich · WordPress · Invoice Ninja · Odoo · n8n · Portainer · Komodo', leds: ['on', 'on', 'azul'], alta: true },
+  { nombre: 'TrueNAS', detalle: 'NAS interno', leds: ['on', 'on', 'on'], alta: true },
+  { nombre: 'Grafana', detalle: 'monitorización de servicios', leds: ['on', 'azul', 'on'], alta: false },
+  { nombre: 'Backups', detalle: 'copias de seguridad', leds: ['on', 'on', 'off'], alta: false },
+];
+const descripcion =
+  'Esquema del homelab: entrada por Cloudflare Tunnel con Cloudflare Access, acceso remoto por OpenVPN, servicios en Docker Compose (Immich, WordPress, Invoice Ninja, Odoo, n8n, Portainer y Komodo), NAS interno con TrueNAS, monitorización con Grafana y copias de seguridad.';
+---
+
+<div class="rack" role="img" aria-label={descripcion}>
+  {
+    unidades.map((u) => (
+      <div class:list={['unit', { u2: u.alta }]}>
+        <span class="leds">
+          {u.leds.map((l) => (
+            <i class={l} />
+          ))}
+        </span>
+        <span class="name">
+          <b>{u.nombre}</b>
+          <span>{u.detalle}</span>
+        </span>
+        <span class="vent" />
+      </div>
+    ))
+  }
+</div>
+<p class="note">Es un esquema, no una foto. No enseño IP, dominios internos ni contraseñas.</p>
+
+<style>
+  .rack {
+    background: #1b1d21;
+    color: #f2f3f5;
+    border-radius: 18px;
+    padding: 18px 26px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px #2c2f35;
+  }
+  .rack::before,
+  .rack::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    width: 8px;
+    background: repeating-linear-gradient(180deg, #0c0d0f 0 4px, transparent 4px 14px);
+  }
+  .rack::before {
+    left: 9px;
+  }
+  .rack::after {
+    right: 9px;
+  }
+  .unit {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    min-height: 62px;
+    padding: 12px 18px;
+    margin-block: 6px;
+    border-radius: 6px;
+    background: linear-gradient(#2a2d33, #24272c);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 1px 0 #0c0d0f;
+  }
+  .unit.u2 {
+    min-height: 100px;
+  }
+  .leds {
+    display: flex;
+    gap: 6px;
+  }
+  .leds i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--led);
+  }
+  .leds i.azul {
+    background: #4fa3ff;
+  }
+  .leds i.off {
+    background: #3a3d44;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .leds i:nth-child(2) {
+      animation: flick 1.3s steps(2) infinite;
+    }
+    .unit:nth-child(2n) .leds i:nth-child(2) {
+      animation-duration: 0.9s;
+    }
+    .unit:nth-child(3n) .leds i:nth-child(3) {
+      animation: flick 1.7s steps(2) infinite;
+    }
+  }
+  @keyframes flick {
+    50% {
+      opacity: 0.25;
+    }
+  }
+  .name {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+  }
+  .name b {
+    font-weight: 700;
+    font-stretch: 80%;
+    font-size: 18px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .name span {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: #9a9ea7;
+    line-height: 1.45;
+  }
+  .vent {
+    display: none;
+    width: 72px;
+    height: 26px;
+    background: radial-gradient(circle, #0c0d0f 1.4px, transparent 1.6px) 0 0/8px 8px;
+  }
+  @media (min-width: 1101px) {
+    .unit {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+    .vent {
+      display: block;
+    }
+  }
+  .note {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+</style>

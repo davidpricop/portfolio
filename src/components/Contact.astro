@@ -1,0 +1,74 @@
+---
+import { site } from '../data/site';
+---
+
+<section class="contact" id="contacto">
+  <div class="wrap">
+    <h2 class="display" data-fit>Hable<span class="outline">mos.</span></h2>
+    <div class="row">
+      <div>
+        <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
+        <p>
+          Busco un puesto de desarrollador de aplicaciones con IA en el que pueda seguir aprendiendo. Estoy en Madrid. Si quieres ver alguna
+          de las apps por dentro o que te cuente cómo la hice, escríbeme.
+        </p>
+      </div>
+      <div class="links">
+        {
+          site.cvPdf ? (
+            <a class="pill solid" href={site.cvPdf} download>
+              Descargar CV
+            </a>
+          ) : (
+            <a class="pill solid" href="/sobre-mi/#trayectoria">
+              Ver mi trayectoria
+            </a>
+          )
+        }
+        <a class="pill" href={site.linkedin} rel="me noopener">LinkedIn ↗</a>
+        <a class="pill" href={site.github} rel="me noopener">GitHub ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-block: clamp(48px, 7vw, 80px) clamp(72px, 10vw, 120px);
+  }
+  h2 {
+    font-size: clamp(60px, 21vw, 270px);
+  }
+  .row {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: clamp(28px, 4vw, 40px);
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .row {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+  .mail {
+    display: inline-block;
+    font-size: clamp(24px, 3.4vw, 44px);
+    font-weight: 700;
+    font-stretch: 80%;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+  p {
+    color: var(--muted);
+    max-width: 46ch;
+    margin-top: 12px;
+  }
+  .links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+</style>

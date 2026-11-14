@@ -1,0 +1,71 @@
+---
+import Rack from './Rack.astro';
+---
+
+<section class="lab" id="homelab">
+  <div class="wrap">
+    <div class="txt">
+      <p class="kicker">Homelab</p>
+      <h2 class="display">Mi servidor en casa</h2>
+      <p class="why">Por qué importa: lo que construyo con IA, lo sé desplegar y mantener.</p>
+      <p class="lead">
+        Tengo un Windows Server 2016 con una máquina virtual Linux donde todo va en Docker Compose: mis fotos en Immich, un WordPress, la
+        facturación con Invoice Ninja, Odoo para mis finanzas y n8n para automatizaciones. Además tengo un NAS con TrueNAS. Lo vigilo con
+        Grafana y hago copias de seguridad. Las webs salen por un túnel de Cloudflare, sin puertos web abiertos en el router, y para
+        administrarlo me conecto por VPN.
+      </p>
+      <div class="foot">
+        <span class="status live" data-estado="produccion"><i></i>En uso diario</span>
+        <a class="pill small" href="/proyectos/homelab/">Ver el homelab</a>
+      </div>
+    </div>
+    <div class="dibujo">
+      <Rack />
+    </div>
+  </div>
+</section>
+
+<style>
+  .lab {
+    background: var(--night);
+    color: var(--night-fg);
+    padding-block: clamp(72px, 10vw, 120px);
+    /* Dentro de esta sección el texto secundario usa el gris de fondo oscuro */
+    --muted: var(--night-muted);
+  }
+  .wrap {
+    display: grid;
+    gap: 56px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 960px) {
+    .wrap {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      align-items: center;
+    }
+  }
+  .txt {
+    display: grid;
+    gap: 20px;
+  }
+  h2 {
+    font-size: clamp(48px, 7.5vw, 104px);
+  }
+  .why {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--led);
+  }
+  .lead {
+    color: var(--night-muted);
+    font-size: clamp(17px, 1.7vw, 19px);
+    max-width: 44ch;
+  }
+  .foot {
+    display: flex;
+    gap: 14px 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+</style>
