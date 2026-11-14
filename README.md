@@ -58,7 +58,11 @@ Los botones «CV» pasan solos de enlazar a la trayectoria a descargar el PDF.
 - Del homelab no se publican IP, dominios internos ni credenciales. El rack es un dibujo.
 - Sin secretos en el repositorio: esta web no usa claves ni variables de entorno.
 
-## Despliegue en Cloudflare Pages
+## Despliegue
+
+La web está publicada como **Worker con archivos estáticos** en Cloudflare (proyecto `porfolio`), conectado a este repositorio: cada `push` a `main` la publica. La configuración está en `wrangler.jsonc`. Si cambias el nombre del proyecto en Cloudflare, cambia también `name` en ese archivo.
+
+### Alternativa: Cloudflare Pages
 
 1. Sube este proyecto a un repositorio de GitHub.
 2. En Cloudflare: **Workers & Pages → Create → Pages → Connect to Git** y elige el repositorio.

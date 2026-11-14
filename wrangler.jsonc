@@ -1,0 +1,12 @@
+// Configuración del Worker de Cloudflare que sirve la web estática (carpeta dist).
+// El nombre tiene que coincidir con el del proyecto en Cloudflare.
+{
+  "name": "porfolio",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // Las rutas que no existen muestran dist/404.html con estado 404, en vez de una página vacía.
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
