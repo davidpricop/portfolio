@@ -10,7 +10,7 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/david-emanuel-pricop-a371ba32/',
   github: 'https://github.com/davidpricop',
   // Pon aquí la ruta del PDF (por ejemplo '/cv/david-pricop-cv.pdf') cuando esté la versión pública.
-  cvPdf: null as string | null,
+  cvPdf: '/cv/david-pricop-cv.pdf' as string | null,
 } as const;
 
 export const nav = [

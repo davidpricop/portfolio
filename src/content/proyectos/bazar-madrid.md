@@ -11,7 +11,7 @@ tinta: "#0B1F17"
 acento: "#3DE39A"
 captura: "../../assets/capturas/bazarmadrid-mapa-movil.jpg"
 capturaAlt: "Bazar Madrid en Lavapiés: mapa con comercios abiertos y cerrados y el más cercano a un minuto a pie"
-stack: ["Flutter", "Google Maps", "Supabase"]
+stack: ["Flutter", "Google Maps", "Supabase", "PostGIS"]
 ficha:
   - { campo: "Mi papel", valor: "Lo hice yo solo" }
   - { campo: "Estado", valor: "En desarrollo" }
