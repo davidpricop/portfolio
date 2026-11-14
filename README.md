@@ -66,7 +66,7 @@ Los botones «CV» pasan solos de enlazar a la trayectoria a descargar el PDF.
    - Framework preset: `Astro`
    - Build command: `npm run build`
    - Build output directory: `dist`
-   - Variable de entorno: `NODE_VERSION` = `22` (o superior)
+   - Versión de Node: la toma del archivo `.node-version` (24). Si no, añade la variable `NODE_VERSION` = `24`.
 4. En **Custom domains**, añade `david.pricop.es`. La zona `pricop.es` ya está en Cloudflare, así que el registro DNS y el HTTPS se crean solos.
 
 Cada `push` a `main` publica la web. Cada rama o pull request genera una URL de previsualización.
