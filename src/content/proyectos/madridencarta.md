@@ -1,7 +1,7 @@
 ---
 titulo: "MadridEnCarta"
 orden: 1
-resumen: "Carta digital con QR para bares. El primer cliente fue el restaurante donde trabajaba mi mujer; el segundo llegó recomendado por él."
+resumen: "Carta digital con QR para bares. Ya tiene dos restaurantes como clientes."
 entradilla: "Carta digital con QR para bares de Madrid. El bar sube una foto de su carta de papel y la IA crea todos los platos con sus alérgenos."
 descripcionSeo: "MadridEnCarta: carta digital con QR para bares. Una IA crea los platos y sus alérgenos a partir de una foto de la carta. Dos clientes reales."
 estado: "produccion"
@@ -33,7 +33,7 @@ enlaces:
 secciones:
   - etiqueta: "Problema"
     titulo: "Cada cambio de precio, a la imprenta"
-    texto: "Mi mujer trabajaba de camarera en Mavi Kebap, y por ella conocí el problema. La carta eran siete hojas plastificadas metidas en carpetas. Cada vez que subía un precio tocaba reimprimirlas todas y esperar varios días, así que mientras tanto se corregía a boli."
+    texto: "La carta de Mavi Kebap eran siete hojas plastificadas metidas en carpetas. Cada vez que subía un precio tocaba reimprimirlas todas y esperar varios días, así que mientras tanto se corregía a boli."
   - etiqueta: "Objetivo"
     titulo: "Que el dueño la cambie él solo"
     texto: "Quería que el dueño pudiera cambiar un precio o quitar un plato él mismo, en un minuto, sin tener que tocar los QR de las mesas. Y que el cliente abriera la carta con la cámara del móvil, sin instalar nada."
@@ -48,7 +48,7 @@ secciones:
     texto: "Escribí una especificación para cada funcionalidad antes de programar, les puse reglas a los agentes sobre lo que podían tocar, y revisé y probé cada cambio antes de publicarlo."
   - etiqueta: "Resultado"
     titulo: "Dos clientes: uno funcionando y otro en marcha"
-    texto: "La carta de Mavi Kebap está publicada con sus 122 platos, en español y en inglés, y los QR están puestos en el local. Mavi me recomendó a Kebab Gran Oporto 2, en la zona de Oporto, que ya es mi segundo cliente. Ahora estoy montando su carta."
+    texto: "La carta de Mavi Kebap está publicada con sus 122 platos, en español y en inglés, y los QR están puestos en el local. Kebab Gran Oporto 2 es mi segundo cliente. Ahora estoy montando su carta."
 implementado:
   - "Platos creados por IA a partir de una foto de la carta"
   - "Alérgenos asignados por IA según cada plato"
